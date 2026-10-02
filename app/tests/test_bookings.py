@@ -145,7 +145,7 @@ def test_cancel_past_booking(client: TestClient, auth_headers, setup_data, db):
         "centre_id": c_id, "test_id": t_id, "appointment_at": (datetime.now(timezone.utc) + timedelta(days=2)).isoformat()
     }).json()
     
-    booking = db.query(Booking).get(b["id"])
+    booking = db.get(Booking, b["id"])
     booking.appointment_at = datetime.now(timezone.utc) - timedelta(days=1)
     db.commit()
     

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, condecimal
+from pydantic import BaseModel, Field, condecimal, ConfigDict
 from typing import Literal, Optional
 from datetime import datetime
 
@@ -15,8 +15,7 @@ class PaymentResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class WebhookPayload(BaseModel):
     event_id: str = Field(min_length=1)

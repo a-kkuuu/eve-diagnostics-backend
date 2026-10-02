@@ -203,7 +203,7 @@ def test_webhook_success_after_cancelled(client: TestClient, auth_headers, setup
     client.post("/payments/webhook/", content=json.dumps(payload), headers={"X-Signature": generate_signature(payload)})
     
     db.expire_all()
-    b_updated = db.query(Booking).get(b["id"])
+    b_updated = db.get(Booking, b["id"])
     assert b_updated.status == "CANCELLED"
 
 def test_db_unique_success_payment(db, setup_data, test_user):
