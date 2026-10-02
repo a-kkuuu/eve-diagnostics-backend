@@ -83,3 +83,10 @@ def auth_headers(user_token):
 @pytest.fixture
 def admin_headers(admin_token):
     return {"Authorization": f"Bearer {admin_token}"}
+
+@pytest.fixture
+def setup_data(client: TestClient, admin_headers):
+    c = client.post("/centres", headers=admin_headers, json={"name": "CB", "location": "LB", "address": "AB"}).json()
+    t = client.post("/tests", headers=admin_headers, json={"name": "TB"}).json()
+    client.post(f"/centres/{c['id']}/tests", headers=admin_headers, json={"test_id": t["id"], "price": 100.0})
+    return c['id'], t['id']

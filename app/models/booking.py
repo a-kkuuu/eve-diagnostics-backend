@@ -25,6 +25,7 @@ class Booking(Base):
 
     centre = sa.orm.relationship("Centre")
     test = sa.orm.relationship("Test")
+    payments = sa.orm.relationship("Payment", back_populates="booking")
 
     @property
     def centre_name(self) -> str:

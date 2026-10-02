@@ -6,12 +6,7 @@ from app.services.booking_service import change_status
 from app.models.booking import Booking
 from fastapi import HTTPException
 
-@pytest.fixture
-def setup_data(client: TestClient, admin_headers):
-    c = client.post("/centres", headers=admin_headers, json={"name": "CB", "location": "LB", "address": "AB"}).json()
-    t = client.post("/tests", headers=admin_headers, json={"name": "TB"}).json()
-    client.post(f"/centres/{c['id']}/tests", headers=admin_headers, json={"test_id": t["id"], "price": 100.0})
-    return c['id'], t['id']
+
 
 def test_unauthenticated(client: TestClient):
     assert client.post("/bookings", json={}).status_code == 401
