@@ -9,6 +9,30 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eve_user -d eve_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    # Local development values only. Never reuse these in a real deployment.
+    environment:
+      - DATABASE_URL=postgresql+psycopg://eve_user:eve_password@db:5432/eve_db
+      - SECRET_KEY=fake_secret_key_for_compose_only_replace_me
+      - JWT_ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+      - WEBHOOK_SECRET=fake_webhook_secret_for_compose_only
+      - ADMIN_EMAIL=admin@eve.com
+      - ADMIN_PASSWORD=adminpassword
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
 volumes:
   postgres_data:
