@@ -28,7 +28,8 @@ Notes:
 
 ## Payment Design
 - One function apply_payment_result(payment, status) shared by POST /payments/ and POST /payments/webhook/.
-- Booking states: PENDING -> CONFIRMED | FAILED; PENDING | CONFIRMED -> CANCELLED. Terminal states are never overwritten; late FAILED after SUCCESS is ignored and logged.
+- Booking states: PENDING, CONFIRMED, FAILED, CANCELLED.
+  Transitions: PENDING -> CONFIRMED, FAILED, CANCELLED; FAILED -> CONFIRMED, CANCELLED; CONFIRMED -> CANCELLED; CANCELLED -> terminal. Any other transition is rejected (e.g., CONFIRMED -> FAILED).
 - Webhook flow in one transaction: verify HMAC signature -> insert event_id (unique constraint; on conflict return 200 already_processed) -> SELECT ... FOR UPDATE on the payment -> apply result -> commit.
 - POST /payments/ accepts optional simulate: success|failed (random if omitted, deterministic in tests).
 - Accessing another user's booking returns 404, not 403.

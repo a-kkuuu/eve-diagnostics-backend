@@ -35,7 +35,7 @@ def setup_database():
 def db(setup_database):
     connection = engine.connect()
     transaction = connection.begin()
-    session = TestingSessionLocal(bind=connection)
+    session = TestingSessionLocal(bind=connection, join_transaction_mode="create_savepoint")
     
     yield session
     
