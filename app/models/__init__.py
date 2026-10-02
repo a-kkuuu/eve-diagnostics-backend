@@ -1,1 +1,1 @@
-# Models will go here
+from app.models.user import User

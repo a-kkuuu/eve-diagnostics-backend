@@ -16,6 +16,7 @@ if config.config_file_name is not None:
 
 from app.config import settings
 from app.database import Base
+import app.models  # Ensure models are loaded
 
 config.set_main_option("sqlalchemy.url", settings.database_url)
 
