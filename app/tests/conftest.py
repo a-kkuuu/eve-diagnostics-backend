@@ -50,3 +50,36 @@ def client(db):
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
     del app.dependency_overrides[get_db]
+
+from app.models.user import User
+from app.security import hash_password, create_access_token
+
+@pytest.fixture
+def test_user(db):
+    user = User(email="normal_user@eve.com", password_hash=hash_password("password"), full_name="User", is_admin=False)
+    db.add(user)
+    db.commit()
+    return user
+
+@pytest.fixture
+def admin_user(db):
+    user = User(email="admin_test@eve.com", password_hash=hash_password("password"), full_name="Admin", is_admin=True)
+    db.add(user)
+    db.commit()
+    return user
+
+@pytest.fixture
+def user_token(test_user):
+    return create_access_token(test_user.id)
+
+@pytest.fixture
+def admin_token(admin_user):
+    return create_access_token(admin_user.id)
+
+@pytest.fixture
+def auth_headers(user_token):
+    return {"Authorization": f"Bearer {user_token}"}
+
+@pytest.fixture
+def admin_headers(admin_token):
+    return {"Authorization": f"Bearer {admin_token}"}
